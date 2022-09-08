@@ -26,7 +26,7 @@ void rotateMat(Mat &matImage, int rotation)
     }
 }
 
-Mat convertToMat(int width, int height, uint8_t *bytes, bool isYUV)
+Mat convertToMat(int width, int height, int rotation, uint8_t *bytes, bool isYUV)
 {
     Mat frame;
     if (isYUV)
@@ -38,7 +38,7 @@ Mat convertToMat(int width, int height, uint8_t *bytes, bool isYUV)
     {
         frame = Mat(height, width, CV_8UC4, bytes);
     }
-    // rotateMat(frame, rotation);
+    rotateMat(frame, rotation);
     cvtColor(frame, frame, COLOR_BGRA2GRAY);
     return frame;
 }
@@ -54,7 +54,7 @@ extern "C"
     }
 
     __attribute__((visibility("default"))) __attribute__((used)) void
-    initCalculator(int width, int height, uint8_t *bytes, bool isYUV)
+    initCalculator(int width, int height, int rotation, uint8_t *bytes, bool isYUV)
     {
         if (calculator != nullptr)
         {
@@ -63,14 +63,14 @@ extern "C"
         }
         calculator = new OpticalFlowCalculator();
 
-        Mat frame = convertToMat(width, height, bytes, isYUV);
+        Mat frame = convertToMat(width, height, rotation, bytes, isYUV);
         calculator->init(frame);
     }
 
     // Attributes to prevent unused functions from being removed
     __attribute__((visibility("default"))) __attribute__((used))
     const float *
-    opticalFlowIteration(int width, int height, uint8_t *bytes, bool isYUV,
+    opticalFlowIteration(int width, int height, int rotation, uint8_t *bytes, bool isYUV,
                          int32_t *outCount)
     {
         if (calculator == nullptr)
@@ -80,7 +80,7 @@ extern "C"
             return jres;
         }
 
-        Mat new_frame = convertToMat(width, height, bytes, isYUV);
+        Mat new_frame = convertToMat(width, height, rotation, bytes, isYUV);
         cv::Point2f result = calculator->process(new_frame);
         // check result contains values
         if (result.x == 0 && result.y == 0)

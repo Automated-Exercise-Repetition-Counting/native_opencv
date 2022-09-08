@@ -14,17 +14,27 @@ final DynamicLibrary nativeOpenCVLib = Platform.isAndroid
 
 // Define the C function
 typedef _c_version = Pointer<Utf8> Function();
-typedef _c_initCalculator = Void Function(
-    Int32 width, Int32 height, Pointer<Uint8> bytes, Bool isYuV);
-typedef _c_opticalFlowIteration = Pointer<Float> Function(Int32 width,
-    Int32 height, Pointer<Uint8> bytes, Bool isYuV, Pointer<Int32> outCount);
+typedef _c_initCalculator = Void Function(Int32 width, Int32 height,
+    Int32 rotation, Pointer<Uint8> bytes, Bool isYuV);
+typedef _c_opticalFlowIteration = Pointer<Float> Function(
+    Int32 width,
+    Int32 height,
+    Int32 rotation,
+    Pointer<Uint8> bytes,
+    Bool isYuV,
+    Pointer<Int32> outCount);
 
 // Dart function signatures
 typedef _dart_version = Pointer<Utf8> Function();
 typedef _dart_initCalculator = void Function(
-    int width, int height, Pointer<Uint8> bytes, bool isYUV);
-typedef _dart_opticalFlowIteration = Pointer<Float> Function(int width,
-    int height, Pointer<Uint8> bytes, bool isYUV, Pointer<Int32> outCount);
+    int width, int height, int rotation, Pointer<Uint8> bytes, bool isYUV);
+typedef _dart_opticalFlowIteration = Pointer<Float> Function(
+    int width,
+    int height,
+    int rotation,
+    Pointer<Uint8> bytes,
+    bool isYUV,
+    Pointer<Int32> outCount);
 
 // Create dart functions that invoke the C functions
 final _version =
@@ -53,7 +63,7 @@ class NativeOpencv {
     return _version().toDartString();
   }
 
-  void initCalculator(int width, int height, Uint8List yBuffer,
+  void initCalculator(int width, int height, int rotation, Uint8List yBuffer,
       Uint8List? uBuffer, Uint8List? vBuffer) {
     var ySize = yBuffer.lengthInBytes;
     var uSize = uBuffer?.lengthInBytes ?? 0;
@@ -72,12 +82,12 @@ class NativeOpencv {
       bytes.setAll(ySize + vSize, uBuffer!);
     }
 
-    _initOpticalFloatCalculator(
-        width, height, _imageBuffer!, Platform.isAndroid ? true : false);
+    _initOpticalFloatCalculator(width, height, rotation, _imageBuffer!,
+        Platform.isAndroid ? true : false);
   }
 
-  Float32List opticalFlowIteration(int width, int height, Uint8List yBuffer,
-      Uint8List? uBuffer, Uint8List? vBuffer) {
+  Float32List opticalFlowIteration(int width, int height, int rotation,
+      Uint8List yBuffer, Uint8List? uBuffer, Uint8List? vBuffer) {
     var ySize = yBuffer.lengthInBytes;
     var uSize = uBuffer?.lengthInBytes ?? 0;
     var vSize = vBuffer?.lengthInBytes ?? 0;
@@ -96,7 +106,7 @@ class NativeOpencv {
     }
 
     Pointer<Int32> outCount = malloc.allocate<Int32>(1);
-    var res = _opticalFlowIteration(width, height, _imageBuffer!,
+    var res = _opticalFlowIteration(width, height, rotation, _imageBuffer!,
         Platform.isAndroid ? true : false, outCount);
     final count = outCount.value;
     malloc.free(outCount);
