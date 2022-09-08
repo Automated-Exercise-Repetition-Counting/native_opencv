@@ -75,20 +75,14 @@ extern "C"
     {
         if (calculator == nullptr)
         {
-            float *jres = new float[1];
-            jres[0] = 0;
+            float *jres = new float[2];
+            jres[0] = std::numeric_limits<float>::infinity();
+            jres[1] = std::numeric_limits<float>::infinity();
             return jres;
         }
 
         Mat new_frame = convertToMat(width, height, rotation, bytes, isYUV);
         cv::Point2f result = calculator->process(new_frame);
-        // check result contains values
-        if (result.x == 0 && result.y == 0)
-        {
-            float *jres = new float[1];
-            jres[0] = 0;
-            return jres;
-        }
 
         vector<float> output;
         // fetch two values from result

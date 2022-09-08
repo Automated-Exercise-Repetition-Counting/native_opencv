@@ -7,6 +7,7 @@
 using namespace std;
 using namespace cv;
 
+#define ERROR_VALUE std::numeric_limits<float>::infinity()
 void OpticalFlowCalculator::init(cv::Mat frame)
 {
     goodFeaturesToTrack(frame, p0, 100, 0.3, 7, Mat(), 7, false, 0.04);
@@ -60,7 +61,9 @@ cv::Point2f OpticalFlowCalculator::process(cv::Mat frame)
     }
     catch (Exception e)
     {
-        ;
+        // set result to error value
+        result.x = ERROR_VALUE;
+        result.y = ERROR_VALUE;
     }
     return result;
 };
