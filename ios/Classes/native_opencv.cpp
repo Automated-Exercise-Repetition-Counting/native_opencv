@@ -26,19 +26,19 @@ void rotateMat(Mat &matImage, int rotation)
     }
 }
 
-Mat convertToMat(int width, int height, int rotation, uint8_t *bytes, bool isYUV)
+Mat convertToMat(int width, int height, uint8_t *bytes, bool isYUV)
 {
     Mat frame;
     if (isYUV)
     {
-        rotateMat(frame, rotation);
+        // rotateMat(frame, rotation);
         cvtColor(Mat(height + height / 2, width, CV_8UC1, bytes), frame, COLOR_YUV2BGR_NV21);
     }
     else
     {
         frame = Mat(height, width, CV_8UC4, bytes);
     }
-    rotateMat(frame, rotation);
+    // rotateMat(frame, rotation);
     cvtColor(frame, frame, COLOR_BGRA2GRAY);
     return frame;
 }
@@ -54,7 +54,7 @@ extern "C"
     }
 
     __attribute__((visibility("default"))) __attribute__((used)) void
-    initCalculator(int width, int height, int rotation, uint8_t *bytes, bool isYUV)
+    initCalculator(int width, int height, uint8_t *bytes, bool isYUV)
     {
         if (calculator != nullptr)
         {
@@ -62,7 +62,7 @@ extern "C"
             calculator = nullptr;
         }
 
-        Mat frame = convertToMat(width, height, rotation, bytes, isYUV);
+        Mat frame = convertToMat(width, height, bytes, isYUV);
         calculator = new OpticalFlowCalculator();
         calculator->init(frame);
     }
@@ -70,8 +70,8 @@ extern "C"
     // Attributes to prevent unused functions from being removed
     __attribute__((visibility("default"))) __attribute__((used))
     const float *
-    opticalFlowIteration(int width, int height, int rotation, uint8_t *bytes, bool isYUV,
-                         float *outCount)
+    opticalFlowIteration(int width, int height, uint8_t *bytes, bool isYUV,
+                         int32_t *outCount)
     {
         if (calculator == nullptr)
         {
@@ -80,7 +80,7 @@ extern "C"
             return jres;
         }
 
-        Mat new_frame = convertToMat(width, height, rotation, bytes, isYUV);
+        Mat new_frame = convertToMat(width, height, bytes, isYUV);
         float *result = calculator->process(new_frame);
 
         vector<float> output;

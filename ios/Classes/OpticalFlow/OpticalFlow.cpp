@@ -38,13 +38,11 @@ float *OpticalFlowCalculator::process(cv::Mat frame)
     // TODO Detect average here, then return
 
     // store into result
-    float result[2] = {0, 0};
+    static float result[2] = {0, 0};
 
     // update old frame
     p0 = good_new;
     old_gray = frame.clone();
 
-    // convert result array to pointer
-    float *ptr = result;
-    return ptr;
+    return result;
 };
