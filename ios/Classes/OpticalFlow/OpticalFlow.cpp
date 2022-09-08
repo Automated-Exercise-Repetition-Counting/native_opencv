@@ -15,6 +15,7 @@ void OpticalFlowCalculator::init(cv::Mat frame)
 
 cv::Point2f OpticalFlowCalculator::process(cv::Mat frame)
 {
+    recalcPointsCounter++;
     if (recalcPointsCounter > 10 || p0.size() <= 0)
     {
         init(old_gray);
