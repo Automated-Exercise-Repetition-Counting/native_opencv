@@ -1,15 +1,5 @@
-# native_opencv
+# Native OpenCV
 
-A new Flutter plugin project.
+A wrapped around the OpenCV library to achieve [Lucas-Kanade Optical Flow](https://docs.opencv.org/3.4/d4/dee/tutorial_optical_flow.html#:~:text=Lucas%2DKanade%20Optical%20Flow%20in%20OpenCV).
 
-## Getting Started
-
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+Implemented using [the youtube tutorial](https://www.youtube.com/watch?v=wGH_KWpaAVM&ab_channel=TheCodingNotebook) and [code](https://github.com/ValYouW/flutter-opencv-stream-processing/blob/master/tutorial.md) from **The Coding Notebook**.
