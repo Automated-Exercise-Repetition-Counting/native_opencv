@@ -69,6 +69,15 @@ extern "C"
 
     // Attributes to prevent unused functions from being removed
     __attribute__((visibility("default"))) __attribute__((used))
+    /// @brief Calculates the optical flow for the given frame.
+    /// @param width width of the image
+    /// @param height height of the image
+    /// @param rotation rotation of the image
+    /// @param bytes image data
+    /// @param isYUV whether the image is in YUV format
+    /// @param outCount the number of points in the output array
+    /// @return an array of points representing the optical flow. Set to inifinity if
+    /// there is an error
     const float *
     opticalFlowIteration(int width, int height, int rotation, uint8_t *bytes, bool isYUV,
                          int32_t *outCount)
