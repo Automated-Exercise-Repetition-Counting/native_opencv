@@ -7,7 +7,10 @@
 using namespace std;
 using namespace cv;
 
+#define MOVEMENT_THRESHOLD 0.2
+#define FRAMES_BEFORE_RECALC_GOOD_POINTS 10
 #define ERROR_VALUE std::numeric_limits<float>::infinity()
+
 void OpticalFlowCalculator::init(cv::Mat frame)
 {
     goodFeaturesToTrack(frame, p0, 100, 0.3, 7, Mat(), 7, false, 0.04);
@@ -17,7 +20,7 @@ void OpticalFlowCalculator::init(cv::Mat frame)
 cv::Point2f OpticalFlowCalculator::process(cv::Mat frame)
 {
     recalcPointsCounter++;
-    if (recalcPointsCounter > 10 || p0.size() <= 0)
+    if (recalcPointsCounter > FRAMES_BEFORE_RECALC_GOOD_POINTS || p0.size() <= 0)
     {
         init(old_gray);
         recalcPointsCounter = 0;
@@ -34,9 +37,10 @@ cv::Point2f OpticalFlowCalculator::process(cv::Mat frame)
         TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
         calcOpticalFlowPyrLK(old_gray, frame, p0, p1, status, err, Size(15, 15), 2, criteria);
         std::vector<cv::Point2f> good_new;
-        // Calculate average of all points in p1 and p0
-        float x = 0;
-        float y = 0;
+        // sets x and y to infinity initially
+        float xSummation = 0;
+        float ySummation = 0;
+        int movingPointCount = 0;
 
         for (uint i = 0; i < p0.size(); i++)
         {
@@ -44,16 +48,34 @@ cv::Point2f OpticalFlowCalculator::process(cv::Mat frame)
             if (status[i] == 1)
             {
                 good_new.push_back(p1[i]);
-                x += p1[i].x - p0[i].x;
-                y += p1[i].y - p0[i].y;
+
+                float newX = p1[i].x - p0[i].x;
+                float newY = p1[i].y - p0[i].y;
+
+                bool newXAboveThrshold = abs(newX) > MOVEMENT_THRESHOLD;
+                bool newYAboveThrshold = abs(newY) > MOVEMENT_THRESHOLD;
+
+                if (newXAboveThrshold)
+                {
+                    xSummation += newX;
+                }
+
+                if (newYAboveThrshold)
+                {
+                    ySummation += newY;
+                }
+
+                if (newXAboveThrshold || newYAboveThrshold)
+                {
+                    movingPointCount++;
+                }
             }
         }
 
-        x /= good_new.size();
-        y /= good_new.size();
-
-        result.x = x;
-        result.y = y;
+        // avoids division by zero error
+        movingPointCount = movingPointCount == 0 ? 1 : movingPointCount;
+        result.x = xSummation / movingPointCount;
+        result.y = ySummation / movingPointCount;
 
         // update old frame
         p0 = good_new;
