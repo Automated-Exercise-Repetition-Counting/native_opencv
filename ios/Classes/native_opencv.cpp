@@ -61,9 +61,9 @@ extern "C"
             delete calculator;
             calculator = nullptr;
         }
+        calculator = new OpticalFlowCalculator();
 
         Mat frame = convertToMat(width, height, bytes, isYUV);
-        calculator = new OpticalFlowCalculator();
         calculator->init(frame);
     }
 
@@ -81,12 +81,19 @@ extern "C"
         }
 
         Mat new_frame = convertToMat(width, height, bytes, isYUV);
-        float *result = calculator->process(new_frame);
+        cv::Point2f result = calculator->process(new_frame);
+        // check result contains values
+        if (result.x == 0 && result.y == 0)
+        {
+            float *jres = new float[1];
+            jres[0] = 0;
+            return jres;
+        }
 
         vector<float> output;
         // fetch two values from result
-        output.push_back(result[0]);
-        output.push_back(result[1]);
+        output.push_back(result.x);
+        output.push_back(result.y);
 
         unsigned int total = sizeof(float) * output.size();
         float *outputArray = (float *)malloc(total);
