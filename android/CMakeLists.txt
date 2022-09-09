@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18.1)
 
 # open_cv
 set(OpenCV_STATIC ON)
-# OpenCV path is second arg below
+# OpenCV path is second arg below - USE "/" path separator.
 set(OpenCV_DIR D:/OpenCV-android-sdk/sdk/native/jni)
 find_package (OpenCV REQUIRED)
 
