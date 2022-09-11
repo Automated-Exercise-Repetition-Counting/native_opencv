@@ -6,4 +6,4 @@ Implemented using [the youtube tutorial](https://www.youtube.com/watch?v=wGH_KWp
 
 When cloning this repo, make sure to also download the Android SDK from [Source forge](https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-android-sdk.zip/download).
 
-With this installed, note the path that the unzipped sdk is located at. Paste this path into the [`CMakeLists.txt`](native_opencv\android\CMakeLists.txt) file in the `android` folder, on line `6`. Ensure the path uses the `/` path separator.
+With this installed, note the path that the unzipped sdk is located at. Paste this path into the [`CMakeLists.txt`](native_opencv/android/CMakeLists.txt) file in the `android` folder, on line `6`. Ensure the path uses the `/` path separator.
